@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+//import './App.css';
+import './style.css';
+import NavBar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+import { LinkContainer } from 'react-router-bootstrap';
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
+import HomeScreen from './screen/HomeScreen';
+import ProductScreen from './screen/ProductScreen';
+import { Badge } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
+import { useContext } from 'react';
+import { Store } from './Store';
+import CartScreen from './screen/CartScreen';
 function App() {
-  const [count, setCount] = useState(0)
-
+  const { state } = useContext(Store);
+  const { cart } = state;
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <BrowserRouter>
+      <div className="d-flex flex-column site-container">
+        <header>
+          <NavBar bg="dark" variant="dark">
+            <Container>
+              <LinkContainer to="/">
+                <NavBar.Brand>Camilo Store</NavBar.Brand>
+              </LinkContainer>
+              <Nav className="me-auto">
+                <Link to="/cart" className="nav-link">
+                  Cart
+                  {cart.cartItems.length > 0 && (
+                    <Badge pill bg="danger">
+                      {cart.cartItems.reduce(
+                        (acc, item) => acc + item.quantity,
+                        0
+                      )}
+                    </Badge>
+                  )}
+                </Link>
+              </Nav>
+            </Container>
+          </NavBar>
+          {/* <Link to="/">Camilo Store</Link> */}
+        </header>
+        <main>
+          <Container className="mt-3">
+            <Routes>
+              <Route path="/product/:slug" element={<ProductScreen />} />
+              <Route path="/cart" element={<CartScreen />} />
+              <Route path="/" element={<HomeScreen />} />
+            </Routes>
+          </Container>
+        </main>
+        <footer>
+          <div className="text-center">All rights reserved</div>
+        </footer>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
